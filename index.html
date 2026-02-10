@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>For Geena</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient-bg" aria-hidden="true">
+      <div class="floral-pattern" aria-hidden="true"></div>
+      <div id="stars-layer"></div>
+      <div id="shooting-stars-layer"></div>
+      <div id="flowers-layer"></div>
+      <div id="hearts-layer"></div>
+      <div id="hearts-layer-2"></div>
+      <div id="hearts-layer-3"></div>
+      <div id="popup-phrases-layer" aria-live="polite" aria-hidden="true"></div>
+    </div>
+
+    <section id="lock-screen" class="gate-screen">
+      <div class="gate-photo-bg" aria-hidden="true">
+        <img src="geena.jpeg" alt="" />
+      </div>
+      <div class="gate-card gate-card-roses">
+        <span class="gate-corner-rose gate-corner-tl" aria-hidden="true">🌹</span>
+        <span class="gate-corner-rose gate-corner-tr" aria-hidden="true">🌹</span>
+        <span class="gate-corner-rose gate-corner-bl" aria-hidden="true">🌹</span>
+        <span class="gate-corner-rose gate-corner-br" aria-hidden="true">🌹</span>
+        <p class="kicker">Private Access</p>
+        <h1>For Geena <span class="title-hearts">♥ 💕 ♥</span></h1>
+        <p class="gate-valentine">Happy Valentine's Day 💕 🌹 💕</p>
+        <p class="gate-romantic">Just for you — always. With love, forever.</p>
+        <p class="gate-text">
+          Enter the password to unlock.
+        </p>
+        <div class="gate-input-wrap">
+          <input
+            id="password-input"
+            class="input"
+            type="password"
+            placeholder="Enter password"
+            autocomplete="current-password"
+          />
+          <button id="unlock-btn" class="btn btn-gold">Unlock ♥</button>
+        </div>
+        <p id="gate-error" class="error" role="alert"></p>
+      </div>
+    </section>
+
+    <div id="app-shell" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand">
+          <p class="kicker">For Geena 🌹</p>
+          <h2>Studio ♥</h2>
+        </div>
+        <nav class="nav">
+          <button class="nav-item active" data-page="dashboard">Dashboard</button>
+          <button class="nav-item" data-page="casting">Casting</button>
+          <button class="nav-item" data-page="journal">Journal</button>
+          <button class="nav-item" data-page="voice-coach">Voice Coach</button>
+        </nav>
+        <button type="button" class="sidebar-gallery-btn" id="sidebar-geena-gallery-btn" title="Our moments">
+          🌹 Our moments
+        </button>
+      </aside>
+
+      <main class="main-content">
+        <section id="dashboard" class="page active">
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">
+            Your creative command center — built with love, only for you 💕 🌹
+          </p>
+
+          <div class="geena-photo-strip">
+            <p class="geena-strip-label">For you ♥</p>
+            <div class="geena-strip-inner">
+              <button type="button" class="geena-thumb" data-index="0" aria-label="View photo 1">
+                <img src="geena.jpeg" alt="Geena" />
+              </button>
+              <button type="button" class="geena-thumb" data-index="1" aria-label="View photo 2">
+                <img src="geena1.jpeg" alt="Geena" />
+              </button>
+              <button type="button" class="geena-thumb" data-index="2" aria-label="View photo 3">
+                <img src="geena2.png" alt="Geena" />
+              </button>
+            </div>
+            <button type="button" class="btn btn-soft geena-gallery-btn" id="open-geena-gallery-btn">
+              Our moments 🌹
+            </button>
+          </div>
+
+          <div class="cards-grid">
+            <article class="premium-card premium-card-roses">
+              <span class="card-flower card-flower-tl">🌸</span>
+              <h3>Casting & Modeling ♥</h3>
+              <p>
+                Explore Mumbai opportunities in acting, fashion, and fitness.
+              </p>
+              <button class="btn btn-soft goto-btn" data-target="casting">
+                Open Casting
+              </button>
+            </article>
+            <article class="premium-card premium-card-roses">
+              <span class="card-flower card-flower-tl">🌸</span>
+              <h3>Journal Vault ♥</h3>
+              <p>
+                Secure writing spaces for Geena and Arjun with personal tools.
+              </p>
+              <button class="btn btn-soft goto-btn" data-target="journal">
+                Open Journal
+              </button>
+            </article>
+            <article class="premium-card premium-card-roses">
+              <span class="card-flower card-flower-tl">🌸</span>
+              <h3>Voice Acting Coach ♥</h3>
+              <p>
+                Generate prompts, record takes, and evaluate performance quickly.
+              </p>
+              <button class="btn btn-soft goto-btn" data-target="voice-coach">
+                Open Coach
+              </button>
+            </article>
+          </div>
+        </section>
+
+        <section id="casting" class="page">
+          <h1 class="page-title">Casting & Modeling</h1>
+          <article class="panel casting-section">
+            <h3>Mumbai Casting & Acting Resources</h3>
+            <p class="muted">
+              Curated platforms and agencies for auditions, submissions, and training.
+            </p>
+            <div class="link-list" id="mumbai-casting-links">
+              <a href="https://www.backstage.com/casting/" target="_blank" rel="noreferrer">Backstage Casting</a>
+              <a href="https://www.castingnetworks.com/" target="_blank" rel="noreferrer">Casting Networks India</a>
+              <a href="https://pro.imdb.com/" target="_blank" rel="noreferrer">IMDbPro</a>
+              <a href="https://www.castkro.com/" target="_blank" rel="noreferrer">Castkro – India Auditions & Casting</a>
+              <a href="https://castyou.in/apply-for-audition/" target="_blank" rel="noreferrer">CastYou – Modelling & Acting Jobs</a>
+              <a href="https://www.dazzlerr.com/" target="_blank" rel="noreferrer">Dazzlerr – Jobs & Auditions</a>
+              <a href="https://mumbaidreams.co.in/" target="_blank" rel="noreferrer">Mumbai Dreams Casting Agency</a>
+              <a href="https://www.mccc.in/" target="_blank" rel="noreferrer">Mukesh Chhabra Casting Company</a>
+              <a href="https://tulipcasting.com/" target="_blank" rel="noreferrer">Tulip Casting Agency (Andheri)</a>
+              <a href="https://actorprepares.in/specialised-workshop/" target="_blank" rel="noreferrer">Actor Prepares Workshops</a>
+              <a href="https://www.whistlingwoods.net/" target="_blank" rel="noreferrer">Whistling Woods International</a>
+              <a href="https://www.mumbaifilmfestival.com/" target="_blank" rel="noreferrer">Mumbai Academy of the Moving Image (MAMI)</a>
+            </div>
+            <div class="kit-actions">
+              <button type="button" class="btn btn-soft" id="export-kit-btn">Export Talent Submission Kit (PDF)</button>
+            </div>
+          </article>
+
+          <div class="content-grid">
+            <article class="panel">
+              <h3>Mumbai Acting/Casting</h3>
+              <p>
+                Focus: Mumbai casting rooms, OTT auditions, and daily practice.
+                Keep your slate clean, your self-tape lighting consistent, and your
+                portfolio links always ready.
+              </p>
+            </article>
+            <article class="panel">
+              <h3>Fashion Modeling</h3>
+              <p>
+                Focus: premium fashion looks, clean posing, and agency-ready book
+                updates (polaroids + styled).
+              </p>
+            </article>
+            <article class="panel">
+              <h3>Fitness Modeling</h3>
+              <p>
+                Focus: athletic visuals, activewear campaigns, and high-energy
+                expression. Keep posture, core engagement, and breathing visible.
+              </p>
+            </article>
+          </div>
+
+          <article class="panel submission-kit">
+            <h3>Submission Kit</h3>
+            <div class="kit-grid">
+              <div class="kit-item">
+                <h4>Submission Message Template</h4>
+                <textarea id="submission-template" class="input area" readonly>
+Subject: Casting Submission — [ROLE] — Geena Malhotra
+
+Hello [Casting/Team],
+
+I’m Geena Malhotra (Mumbai). I’m submitting for [ROLE]. My work includes [1–2 credits].
+
+Portfolio/Showreel: [LINK]
+Measurements/Stats (if needed): [STATS]
+Available for auditions: [DATES]
+
+Thank you —
+Geena, [PHONE/EMAIL]
+                </textarea>
+                <button class="btn btn-gold copy-btn" data-copy="submission-template">
+                  Copy Template
+                </button>
+              </div>
+              <div class="kit-item">
+                <h4>Email to Casting Agencies</h4>
+                <textarea id="agency-email-template" class="input area" readonly>
+Subject: Actor Submission — Geena Malhotra (Mumbai)
+
+Dear [Agency/Casting Team],
+
+I am Geena Malhotra, an actor based in Mumbai, and I would like to submit my profile for your consideration for film, TV, and commercial projects.
+
+I am comfortable in Hindi, English, and Hinglish. I have [1–2 credits or building my reel and available for auditions at short notice].
+
+Portfolio/Showreel: [LINK]
+Phone: [PHONE]
+Email: [EMAIL]
+
+Thank you for your time. Warm regards,
+Geena Malhotra
+                </textarea>
+                <button class="btn btn-gold copy-btn" data-copy="agency-email-template">
+                  Copy Agency Email
+                </button>
+              </div>
+              <div class="kit-item">
+                <h4>Slate Checklist</h4>
+                <ul id="slate-checklist" class="checklist">
+                  <li>Name</li>
+                  <li>Location (Mumbai)</li>
+                  <li>Height</li>
+                  <li>Profile shots</li>
+                  <li>Full body shot</li>
+                  <li>Intro line (clear + confident)</li>
+                  <li>5 seconds neutral</li>
+                  <li>5 seconds smile</li>
+                  <li>Optional Hinglish intro (only if it helps the vibe)</li>
+                </ul>
+                <button class="btn btn-gold copy-btn" data-copy="slate-checklist">
+                  Copy Checklist
+                </button>
+              </div>
+            </div>
+            <p id="copy-status" class="status"></p>
+          </article>
+        </section>
+
+        <section id="journal" class="page">
+          <h1 class="page-title">Journal Vault</h1>
+
+          <div id="journal-gate" class="panel journal-gate">
+            <h3>Private Journal Access</h3>
+            <p>Use the same password to access Journal pages.</p>
+            <div class="gate-input-wrap">
+              <input
+                id="journal-password-input"
+                class="input"
+                type="password"
+                placeholder="Enter password"
+                autocomplete="current-password"
+              />
+              <button id="journal-unlock-btn" class="btn btn-gold">
+                Unlock Journal ♥
+              </button>
+            </div>
+            <p id="journal-gate-error" class="error" role="alert"></p>
+          </div>
+
+          <div id="journal-content" class="hidden">
+            <div class="tiles-grid">
+              <button class="tile active" data-journal-tab="geena">
+                Geena's Pages
+              </button>
+              <button class="tile" data-journal-tab="arjun">
+                Arjun's Pages
+              </button>
+            </div>
+
+            <article id="journal-geena" class="panel journal-panel active">
+              <h3>Geena's Pages</h3>
+              <p class="muted">Record your day. Entries are saved by date and can be viewed anytime.</p>
+              <div class="form-grid">
+                <label class="field">
+                  Mood
+                  <select id="geena-mood" class="input">
+                    <option value="Focused">Focused</option>
+                    <option value="Joyful">Joyful</option>
+                    <option value="Calm">Calm</option>
+                    <option value="Grateful">Grateful</option>
+                    <option value="Ambitious">Ambitious</option>
+                    <option value="Loved">Loved</option>
+                    <option value="Creative">Creative</option>
+                  </select>
+                </label>
+                <label class="field">
+                  Goal today
+                  <input
+                    id="geena-goal"
+                    class="input"
+                    type="text"
+                    placeholder="What's one goal for today?"
+                  />
+                </label>
+              </div>
+              <label class="field">
+                Notes
+                <textarea
+                  id="geena-notes"
+                  class="input area"
+                  placeholder="Write your thoughts..."
+                ></textarea>
+              </label>
+              <div class="journal-actions">
+                <button type="button" id="geena-save-today-btn" class="btn btn-gold">Save today's entry</button>
+                <p id="geena-save-status" class="status"></p>
+              </div>
+              <div class="past-entries-section">
+                <h4>Past entries</h4>
+                <div id="geena-past-entries-list" class="past-entries-list"></div>
+                <div id="geena-view-entry" class="view-entry-panel hidden"></div>
+              </div>
+            </article>
+
+            <article id="journal-arjun" class="panel journal-panel">
+              <h3>Arjun's Pages</h3>
+              <p class="muted">Open when... letters</p>
+              <div id="letters-list" class="letters-list"></div>
+              <button id="add-letter-btn" class="btn btn-soft">Add Letter</button>
+            </article>
+          </div>
+        </section>
+
+        <section id="voice-coach" class="page">
+          <h1 class="page-title">Voice Acting Coach</h1>
+          <article class="panel">
+            <div class="form-grid coach-grid">
+              <label class="field">
+                Mode
+                <select id="mode-picker" class="input">
+                  <option>Bollywood Romance</option>
+                  <option>Intense Drama</option>
+                  <option>Comedy/Timing</option>
+                  <option>Audition Slate</option>
+                  <option>Commercial/Brand Read</option>
+                </select>
+              </label>
+              <label class="field">
+                Duration
+                <select id="duration-picker" class="input">
+                  <option value="30">30 sec</option>
+                  <option value="60" selected>60 sec</option>
+                  <option value="90">90 sec</option>
+                </select>
+              </label>
+              <label class="field">
+                Difficulty
+                <select id="difficulty-picker" class="input">
+                  <option value="Easy">Easy</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="Hard">Hard</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="action-row">
+              <button id="generate-prompt-btn" class="btn btn-gold">
+                Generate Prompt
+              </button>
+              <button id="record-btn" class="btn btn-soft">Record</button>
+              <button id="stop-btn" class="btn btn-soft">Stop</button>
+              <button id="evaluate-btn" class="btn btn-gold">Evaluate</button>
+            </div>
+
+            <div class="realtime-bar">
+              <label class="toggle">
+                <input id="realtime-toggle" type="checkbox" />
+                <span>Realtime (beta)</span>
+              </label>
+              <div class="realtime-actions">
+                <button id="realtime-start-btn" class="btn btn-soft" disabled>
+                  Start Realtime
+                </button>
+                <button id="realtime-stop-btn" class="btn btn-soft" disabled>
+                  Stop
+                </button>
+              </div>
+              <div id="realtime-status" class="realtime-status">Off</div>
+            </div>
+
+            <div id="prompt-card" class="prompt-card">
+              Your generated prompt appears here.
+            </div>
+
+            <label class="field">
+              Transcript
+              <textarea
+                id="transcript-box"
+                class="input area"
+                placeholder="Transcript from your recording appears here..."
+              ></textarea>
+            </label>
+
+            <div id="voice-results" class="results">Evaluation results appear here.</div>
+          </article>
+        </section>
+      </main>
+
+      <div class="romantic-progress" aria-hidden="true">
+        <span class="romantic-progress-heart">♥ 🌹 ♥</span>
+        <span class="romantic-progress-label">With you • Always • Forever</span>
+        <span class="romantic-progress-count">1 of 3</span>
+        <div class="romantic-progress-bar">
+          <div class="romantic-progress-fill" style="width: 33.33%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="geena-lightbox" class="geena-lightbox hidden" aria-modal="true" aria-label="Photo gallery" tabindex="-1">
+      <div class="geena-lightbox-backdrop"></div>
+      <button type="button" class="geena-lightbox-close" aria-label="Close gallery">&times;</button>
+      <button type="button" class="geena-lightbox-prev" aria-label="Previous photo">&larr;</button>
+      <button type="button" class="geena-lightbox-next" aria-label="Next photo">&rarr;</button>
+      <div class="geena-lightbox-content">
+        <img id="geena-lightbox-img" src="" alt="Geena" />
+      </div>
+      <div class="geena-lightbox-dots" id="geena-lightbox-dots"></div>
+    </div>
+
+    <div id="print-kit" class="print-only" aria-hidden="true"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
