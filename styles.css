@@ -1103,6 +1103,41 @@ h4 {
   color: var(--muted);
 }
 
+.past-feedback-section {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.past-feedback-section h4 {
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.past-feedback-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.past-feedback-btn {
+  font-size: 0.88rem;
+}
+
+.view-feedback-panel {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--border);
+  margin-top: 12px;
+}
+
+.view-feedback-panel strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
 .form-grid {
   display: grid;
   gap: 12px;

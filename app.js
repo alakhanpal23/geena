@@ -5,6 +5,7 @@ const STORAGE_KEYS = {
   geenaData: "geenaJournalData",
   geenaEntries: "geenaJournalEntries",
   arjunLetters: "arjunOpenWhenLetters",
+  voiceFeedbackHistory: "geenaVoiceFeedbackHistory",
 };
 
 const DEFAULT_ACCENT = "Indian English";
@@ -270,7 +271,7 @@ function initGeenaJournal() {
     pastList.innerHTML = "";
     const forList = entries.filter((e) => e.date !== getTodayKey()).slice(0, 30);
     if (forList.length === 0) {
-      pastList.innerHTML = '<p class="muted">No past entries yet. Save today\'s entry to start.</p>';
+      pastList.innerHTML = '<p class="muted">No past entries yet. Save today\'s entry above; other days will appear here.</p>';
       return;
     }
     forList.forEach((entry) => {
@@ -681,6 +682,15 @@ function initVoiceCoach() {
       });
 
       results.innerHTML = renderGradeResults(gradeObj);
+      saveVoiceFeedback({
+        date: new Date().toISOString(),
+        mode,
+        duration,
+        promptTitle: currentPromptObject?.title || "—",
+        transcriptSnippet: transcript.slice(0, 200) + (transcript.length > 200 ? "…" : ""),
+        gradeObj,
+      });
+      renderVoiceFeedbackHistory();
     } catch (error) {
       // Fallback: basic local evaluation if backend is down.
       results.innerHTML = renderLocalFallbackEvaluation(transcript, duration);
@@ -693,6 +703,8 @@ function initVoiceCoach() {
       setButtonLoading(evaluateBtn, false, "Evaluate");
     }
   });
+
+  renderVoiceFeedbackHistory();
 }
 
 function createAmbientParticles() {
@@ -864,6 +876,61 @@ function renderGradeResults(g) {
     <div style="margin-top:10px"><strong>Drill:</strong> ${escapeHtml(g.drill)}</div>
     <div style="margin-top:10px"><strong>Take 2 Direction:</strong> ${escapeHtml(g.take2)}</div>
   `;
+}
+
+const VOICE_FEEDBACK_MAX = 50;
+
+function getVoiceFeedbackHistory() {
+  const raw = localStorage.getItem(STORAGE_KEYS.voiceFeedbackHistory);
+  let list = [];
+  try {
+    list = JSON.parse(raw || "[]");
+  } catch {
+    list = [];
+  }
+  return Array.isArray(list) ? list : [];
+}
+
+function saveVoiceFeedback(entry) {
+  let list = getVoiceFeedbackHistory();
+  list.unshift(entry);
+  list = list.slice(0, VOICE_FEEDBACK_MAX);
+  localStorage.setItem(STORAGE_KEYS.voiceFeedbackHistory, JSON.stringify(list));
+}
+
+function renderVoiceFeedbackHistory() {
+  const listEl = document.getElementById("voice-feedback-history-list");
+  const viewEl = document.getElementById("voice-feedback-view");
+  if (!listEl) return;
+
+  const list = getVoiceFeedbackHistory();
+  listEl.innerHTML = "";
+
+  if (list.length === 0) {
+    listEl.innerHTML = '<p class="muted">No saved feedback yet. Evaluate a take to save it here.</p>';
+    return;
+  }
+
+  list.forEach((entry, index) => {
+    const dateStr = entry.date ? new Date(entry.date).toLocaleDateString(undefined, { dateStyle: "short" }) : "—";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn btn-soft past-feedback-btn";
+    btn.textContent = `${dateStr} · ${entry.mode || "—"} · ${entry.gradeObj?.overall ?? "—"}/10`;
+    btn.addEventListener("click", () => {
+      if (!viewEl) return;
+      viewEl.classList.remove("hidden");
+      viewEl.innerHTML = `
+        <strong>${escapeHtml(dateStr)}</strong> · ${escapeHtml(entry.mode || "—")} (${entry.duration || 60}s)
+        <p class="muted" style="margin-top:6px">Prompt: ${escapeHtml(entry.promptTitle || "—")}</p>
+        <div style="margin-top:12px">${renderGradeResults(entry.gradeObj || {})}</div>
+        ${entry.transcriptSnippet ? `<p style="margin-top:12px" class="muted"><strong>Transcript snippet:</strong> ${escapeHtml(entry.transcriptSnippet)}</p>` : ""}
+        <button type="button" class="btn btn-soft close-view-feedback-btn" style="margin-top:14px">Close</button>
+      `;
+      viewEl.querySelector(".close-view-feedback-btn")?.addEventListener("click", () => viewEl.classList.add("hidden"));
+    });
+    listEl.appendChild(btn);
+  });
 }
 
 function renderLocalFallbackEvaluation(transcript, durationSeconds) {
