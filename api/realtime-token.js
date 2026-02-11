@@ -44,25 +44,38 @@ export default async function handler(req, res) {
       `Current session: Mode=${mode}, Duration=${duration}s, Difficulty=${difficulty}.`,
     ].join("\n");
 
-    // Realtime API: conversation session (speech-to-speech), not transcription-only.
-    // Matches session shape from docs: format, turn_detection, optional noise_reduction.
+    // Use stable client_secrets endpoint so the token works with wss://api.openai.com/v1/realtime
+    // (Beta /v1/realtime/sessions returns a beta secret that causes "API version mismatch")
     const payload = {
-      model: REALTIME_MODEL,
-      modalities: ["audio", "text"],
-      instructions,
-      voice: REALTIME_VOICE,
-      input_audio_format: "pcm16",
-      output_audio_format: "pcm16",
-      input_audio_noise_reduction: { type: "near_field" },
-      turn_detection: {
-        type: "server_vad",
-        threshold: 0.5,
-        prefix_padding_ms: 300,
-        silence_duration_ms: 500,
+      expires_after: { anchor: "created_at", seconds: 600 },
+      session: {
+        type: "realtime",
+        model: REALTIME_MODEL,
+        output_modalities: ["audio"],
+        instructions,
+        audio: {
+          input: {
+            format: { type: "audio/pcm", rate: 24000 },
+            noise_reduction: { type: "near_field" },
+            transcription: { model: "gpt-4o-mini-transcribe", language: "en" },
+            turn_detection: {
+              type: "server_vad",
+              threshold: 0.5,
+              prefix_padding_ms: 300,
+              silence_duration_ms: 500,
+              create_response: true,
+              interrupt_response: true,
+            },
+          },
+          output: {
+            format: { type: "audio/pcm", rate: 24000 },
+            voice: REALTIME_VOICE,
+          },
+        },
       },
     };
 
-    const r = await fetch("https://api.openai.com/v1/realtime/sessions", {
+    const r = await fetch("https://api.openai.com/v1/realtime/client_secrets", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
