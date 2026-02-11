@@ -79,20 +79,39 @@ export default async function handler(req, res) {
       });
     }
 
-    // Support both top-level and nested client_secret response shapes
+    // Support multiple response shapes: top-level or nested client_secret, various key names
+    const cs = json?.client_secret;
     const value =
       json?.value ??
-      json?.client_secret?.value ??
-      (typeof json?.client_secret === "string" ? json.client_secret : null);
+      (typeof cs === "string" ? cs : null) ??
+      cs?.value ??
+      cs?.secret ??
+      cs?.token ??
+      cs?.ephemeral_key ??
+      (cs && typeof cs === "object" && !Array.isArray(cs) ? cs["Value"] ?? cs["Secret"] : null) ??
+      (typeof cs === "object" && cs !== null && !Array.isArray(cs)
+        ? Object.values(cs).find((v) => typeof v === "string" && v.length > 10)
+        : null);
     const expiresAt =
-      json?.expires_at ?? json?.client_secret?.expires_at ?? json?.expires_at_unix;
+      json?.expires_at ?? cs?.expires_at ?? json?.expires_at_unix;
 
-    if (!value || !expiresAt) {
-      const keys = typeof json === "object" && json !== null ? Object.keys(json).join(", ") : "none";
+    // expires_at can be number (Unix) or string; 0 is valid
+    const hasExpiry = expiresAt !== undefined && expiresAt !== null && expiresAt !== "";
+
+    if (!value || typeof value !== "string" || value.length < 8) {
+      const topKeys = typeof json === "object" && json !== null ? Object.keys(json).join(", ") : "none";
+      const csKeys = typeof cs === "object" && cs !== null ? Object.keys(cs).join(", ") : "n/a";
       return res.status(502).json({
         error: "Realtime token response missing client_secret",
-        message: `OpenAI returned a response but it had no value/expires_at (or client_secret.value/expires_at). Your account may need Realtime API access, or the API response format may have changed. Response keys: ${keys}`,
+        message: `OpenAI returned a response but no usable token (value/secret/token) in client_secret. Response keys: ${topKeys}. client_secret keys: ${csKeys}. Your account may need Realtime API access.`,
         details: ["Unexpected response from OpenAI."],
+      });
+    }
+    if (!hasExpiry) {
+      return res.status(502).json({
+        error: "Realtime token response missing expires_at",
+        message: "OpenAI response had no expires_at. Your account may need Realtime API access.",
+        details: [],
       });
     }
 
