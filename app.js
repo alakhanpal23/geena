@@ -386,6 +386,19 @@ function saveLetters(letters) {
 
 const GEENA_PHOTOS = ["geena.jpeg", "geena1.jpeg", "geena2.png"];
 
+const MEMORY_REEL_PHOTOS = [
+  "39d4a713-75bb-465e-9eb4-cbd2fb6dff29.JPG",
+  "41ba7977-b927-4082-ac0b-5b0718b18707.JPG",
+  "49e3324e-2a4d-49e4-9db5-753e4d592033.JPG",
+  "34430e12-763c-4b23-b002-7d3e5e5a06c5.JPG",
+  "a41ee59b-7b97-45d1-a748-68ab88f53e4c.JPG",
+  "be253744-ac68-4480-ad3d-b463e2d399fc.JPG",
+  "IMG_1060.JPG",
+  "DA208168-4F2E-4280-9060-1767B85E8DF6.JPG",
+  "IMG_0580.JPG",
+  "IMG_8959.JPG",
+];
+
 const POPUP_PHRASES = [
   "Ur my superstar",
   "I love you",
@@ -466,28 +479,34 @@ function initGeenaGallery() {
   if (!lightbox || !img || !dotsContainer) return;
 
   let currentIndex = 0;
+  let currentPhotos = GEENA_PHOTOS;
 
-  dotsContainer.innerHTML = "";
-  GEENA_PHOTOS.forEach((_, i) => {
-    const dot = document.createElement("button");
-    dot.type = "button";
-    dot.className = "geena-lightbox-dot" + (i === 0 ? " active" : "");
-    dot.setAttribute("aria-label", `Go to photo ${i + 1}`);
-    dot.addEventListener("click", () => goTo(i));
-    dotsContainer.appendChild(dot);
-  });
+  function buildDots(photos) {
+    dotsContainer.innerHTML = "";
+    photos.forEach((_, i) => {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "geena-lightbox-dot" + (i === 0 ? " active" : "");
+      dot.setAttribute("aria-label", `Go to photo ${i + 1}`);
+      dot.addEventListener("click", () => goTo(i));
+      dotsContainer.appendChild(dot);
+    });
+  }
 
   function goTo(index) {
-    currentIndex = (index + GEENA_PHOTOS.length) % GEENA_PHOTOS.length;
-    img.src = GEENA_PHOTOS[currentIndex];
+    currentIndex = (index + currentPhotos.length) % currentPhotos.length;
+    img.src = currentPhotos[currentIndex];
     dotsContainer.querySelectorAll(".geena-lightbox-dot").forEach((d, i) => {
       d.classList.toggle("active", i === currentIndex);
     });
   }
 
-  function openGallery(index) {
-    currentIndex = Math.max(0, Math.min(index, GEENA_PHOTOS.length - 1));
-    img.src = GEENA_PHOTOS[currentIndex];
+  function openGallery(index, photosArray) {
+    const photos = photosArray || GEENA_PHOTOS;
+    currentPhotos = photos;
+    buildDots(photos);
+    currentIndex = Math.max(0, Math.min(index, photos.length - 1));
+    img.src = photos[currentIndex];
     dotsContainer.querySelectorAll(".geena-lightbox-dot").forEach((d, i) => {
       d.classList.toggle("active", i === currentIndex);
     });
@@ -495,6 +514,8 @@ function initGeenaGallery() {
     document.body.style.overflow = "hidden";
     lightbox.focus();
   }
+
+  buildDots(GEENA_PHOTOS);
 
   function closeGallery() {
     lightbox.classList.add("hidden");
@@ -520,6 +541,11 @@ function initGeenaGallery() {
 
   document.getElementById("open-geena-gallery-btn")?.addEventListener("click", () => openGallery(0));
   document.getElementById("sidebar-geena-gallery-btn")?.addEventListener("click", () => openGallery(0));
+
+  document.querySelectorAll(".polaroid-card").forEach((card) => {
+    card.addEventListener("click", () => openGallery(Number(card.dataset.index), MEMORY_REEL_PHOTOS));
+  });
+  document.getElementById("open-memory-reel-btn")?.addEventListener("click", () => openGallery(0, MEMORY_REEL_PHOTOS));
 }
 
 function initVoiceCoach() {

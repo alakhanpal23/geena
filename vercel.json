@@ -1,1 +1,16 @@
-{}
+{
+  "headers": [
+    {
+      "source": "/styles.css",
+      "headers": [
+        { "key": "Content-Type", "value": "text/css; charset=utf-8" }
+      ]
+    },
+    {
+      "source": "/app.js",
+      "headers": [
+        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
+      ]
+    }
+  ]
+}
