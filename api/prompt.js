@@ -58,15 +58,21 @@ You are a Bollywood/Mumbai acting coach. Generate a short performable audition p
       ],
     };
 
-    const response = await client.responses.create({
+    const completion = await client.chat.completions.create({
       model: OPENAI_MODEL,
-      input: [
-        { role: "system", content: [{ type: "text", text: system }] },
-        { role: "user", content: [{ type: "text", text: JSON.stringify(user) }] },
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: JSON.stringify(user) },
       ],
     });
 
-    const text = response.output_text;
+    const text = (completion.choices?.[0]?.message?.content ?? "").trim();
+    if (!text) {
+      return res.status(502).json({
+        error: "Prompt generation failed",
+        message: "Model returned no text (empty or filtered).",
+      });
+    }
     const obj = safeJsonParse(text);
     const shape = validatePromptOutput(obj);
     if (!shape.ok) {

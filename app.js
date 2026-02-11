@@ -851,8 +851,9 @@ async function postJson(url, body) {
 
   if (!res.ok) {
     const msg = data?.error ? String(data.error) : `HTTP ${res.status}`;
+    const sub = data?.message ? `: ${String(data.message)}` : "";
     const details = data?.details ? ` — ${JSON.stringify(data.details)}` : "";
-    throw new Error(`${msg}${details}`);
+    throw new Error(`${msg}${sub}${details}`);
   }
   return data;
 }
@@ -1206,6 +1207,18 @@ function createRealtimeState({
       });
     } catch (err) {
       setStatus(`Failed: ${err.message}`);
+      if (results) {
+        results.textContent = "";
+        const p = document.createElement("p");
+        p.style.color = "var(--velvet)";
+        p.textContent = `Could not start Realtime: ${err.message}`;
+        results.appendChild(p);
+        const hint = document.createElement("p");
+        hint.className = "muted";
+        hint.style.marginTop = "8px";
+        hint.textContent = "Check that OPENAI_API_KEY is set in Vercel and your OpenAI account has Realtime API access.";
+        results.appendChild(hint);
+      }
       running = false;
       closeWs();
       await stopAudio();

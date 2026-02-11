@@ -84,9 +84,11 @@ export default async function handler(req, res) {
 
     const json = await r.json().catch(() => ({}));
     if (!r.ok) {
+      const openaiMsg = json?.error?.message || json?.error?.code || `HTTP ${r.status}`;
       return res.status(502).json({
         error: "Failed to create Realtime client secret",
-        details: [json?.error?.message || `HTTP ${r.status}`],
+        message: openaiMsg,
+        details: [openaiMsg],
       });
     }
 
@@ -95,6 +97,7 @@ export default async function handler(req, res) {
     if (!value || !expiresAt) {
       return res.status(502).json({
         error: "Realtime token response missing client_secret",
+        message: "OpenAI response missing client_secret. Your account may need Realtime API access.",
         details: ["Unexpected response from OpenAI."],
       });
     }
