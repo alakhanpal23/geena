@@ -15,13 +15,13 @@
 
 4. **Turn off Deployment Protection for production (if you see “all text, no UI”)**
    - In Vercel: **Settings → Deployment Protection**.
-   - If **Vercel Authentication** or **Password Protection** is on, it can return 401 for CSS/JS and the page will load as plain text.
-   - For the **production** deployment, either disable protection or use a bypass so your production URL is publicly accessible. Preview deployments can stay protected if you like.
+   - If **Vercel Authentication** or **Password Protection** is on, requests for styles.css, app.js, and images get **401** and the page loads as plain text with no styling or images.
+   - **Disable protection for Production** (or add your production domain to the allowlist) so your site loads the real CSS/JS/assets. Then do a **hard refresh** (Ctrl+Shift+R or Cmd+Shift+R) or open the site in **Incognito**.
 
 5. **Deploy**
    - Deploy from the Vercel dashboard or by pushing to the connected branch.
    - Your site will be live at `https://<project>.vercel.app`. The password gate, Voice Coach, and all API routes will work there.
 
-No need to run a separate server — Vercel runs the API routes as serverless functions. — Vercel runs the API routes as serverless functions.
+No need to run a separate server — Vercel runs the API routes as serverless functions.
 
 **Data storage:** Journal entries (diary) and voice coach evaluation feedback are saved in the browser (localStorage) on the device you use. They persist across visits on that same device but are not synced to a server or other devices.
