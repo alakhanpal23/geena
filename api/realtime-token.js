@@ -44,36 +44,23 @@ export default async function handler(req, res) {
       `Current session: Mode=${mode}, Duration=${duration}s, Difficulty=${difficulty}.`,
     ].join("\n");
 
+    // Use Realtime Beta sessions endpoint (returns client_secret.value + client_secret.expires_at)
     const payload = {
-      expires_after: { anchor: "created_at", seconds: 60 },
-      session: {
-        type: "realtime",
-        model: REALTIME_MODEL,
-        output_modalities: ["audio"],
-        instructions,
-        audio: {
-          input: {
-            format: { type: "audio/pcm", rate: 24000 },
-            noise_reduction: { type: "near_field" },
-            transcription: { model: "gpt-4o-mini-transcribe", language: "en" },
-            turn_detection: {
-              type: "server_vad",
-              threshold: 0.5,
-              prefix_padding_ms: 300,
-              silence_duration_ms: 500,
-              create_response: true,
-              interrupt_response: true,
-            },
-          },
-          output: {
-            format: { type: "audio/pcm", rate: 24000 },
-            voice: REALTIME_VOICE,
-          },
-        },
+      model: REALTIME_MODEL,
+      modalities: ["audio", "text"],
+      instructions,
+      voice: REALTIME_VOICE,
+      input_audio_format: "pcm16",
+      output_audio_format: "pcm16",
+      turn_detection: {
+        type: "server_vad",
+        threshold: 0.5,
+        prefix_padding_ms: 300,
+        silence_duration_ms: 500,
       },
     };
 
-    const r = await fetch("https://api.openai.com/v1/realtime/client_secrets", {
+    const r = await fetch("https://api.openai.com/v1/realtime/sessions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -92,12 +79,19 @@ export default async function handler(req, res) {
       });
     }
 
-    const value = json?.client_secret?.value;
-    const expiresAt = json?.client_secret?.expires_at;
+    // Support both top-level and nested client_secret response shapes
+    const value =
+      json?.value ??
+      json?.client_secret?.value ??
+      (typeof json?.client_secret === "string" ? json.client_secret : null);
+    const expiresAt =
+      json?.expires_at ?? json?.client_secret?.expires_at ?? json?.expires_at_unix;
+
     if (!value || !expiresAt) {
+      const keys = typeof json === "object" && json !== null ? Object.keys(json).join(", ") : "none";
       return res.status(502).json({
         error: "Realtime token response missing client_secret",
-        message: "OpenAI response missing client_secret. Your account may need Realtime API access.",
+        message: `OpenAI returned a response but it had no value/expires_at (or client_secret.value/expires_at). Your account may need Realtime API access, or the API response format may have changed. Response keys: ${keys}`,
         details: ["Unexpected response from OpenAI."],
       });
     }
