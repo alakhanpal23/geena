@@ -44,7 +44,8 @@ export default async function handler(req, res) {
       `Current session: Mode=${mode}, Duration=${duration}s, Difficulty=${difficulty}.`,
     ].join("\n");
 
-    // Use Realtime Beta sessions endpoint (returns client_secret.value + client_secret.expires_at)
+    // Realtime API: conversation session (speech-to-speech), not transcription-only.
+    // Matches session shape from docs: format, turn_detection, optional noise_reduction.
     const payload = {
       model: REALTIME_MODEL,
       modalities: ["audio", "text"],
@@ -52,6 +53,7 @@ export default async function handler(req, res) {
       voice: REALTIME_VOICE,
       input_audio_format: "pcm16",
       output_audio_format: "pcm16",
+      input_audio_noise_reduction: { type: "near_field" },
       turn_detection: {
         type: "server_vad",
         threshold: 0.5,

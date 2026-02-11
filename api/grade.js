@@ -3,6 +3,7 @@ import {
   toBool,
   validateGradeInput,
   validateGradeOutput,
+  normalizeGradeOutput,
   safeJsonParse,
   mockGrade,
 } from "../lib/shared.js";
@@ -73,7 +74,8 @@ You are a Bollywood casting director + acting coach. Grade the actor's performan
         message: "Model returned no text (empty or filtered).",
       });
     }
-    const obj = safeJsonParse(text);
+    const raw = safeJsonParse(text);
+    const obj = normalizeGradeOutput(raw);
     const shape = validateGradeOutput(obj);
     if (!shape.ok) {
       return res.status(502).json({

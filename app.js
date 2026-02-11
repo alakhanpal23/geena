@@ -260,10 +260,23 @@ function initGeenaJournal() {
     if (existing >= 0) entries.splice(existing, 1, entry);
     else entries.push(entry);
     entries.sort((a, b) => (b.date > a.date ? 1 : -1));
-    localStorage.setItem(STORAGE_KEYS.geenaEntries, JSON.stringify(entries));
-    if (saveStatus) saveStatus.textContent = "Saved.";
-    setTimeout(() => { if (saveStatus) saveStatus.textContent = ""; }, 2200);
-    renderPastEntries();
+    try {
+      localStorage.setItem(STORAGE_KEYS.geenaEntries, JSON.stringify(entries));
+      if (saveStatus) saveStatus.textContent = "Saved.";
+      setTimeout(() => { if (saveStatus) saveStatus.textContent = ""; }, 2200);
+      renderPastEntries();
+    } catch (e) {
+      if (saveStatus) saveStatus.textContent = "Could not save (storage may be full or disabled).";
+    }
+  }
+
+  let autoSaveTimer = null;
+  function scheduleAutoSave() {
+    if (autoSaveTimer) clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(() => {
+      autoSaveTimer = null;
+      saveToday();
+    }, 2000);
   }
 
   function renderPastEntries() {
@@ -302,9 +315,14 @@ function initGeenaJournal() {
   renderPastEntries();
 
   if (saveBtn) saveBtn.addEventListener("click", saveToday);
-  [mood, goal, notes].forEach((field) => field.addEventListener("input", () => {
-    if (saveStatus) saveStatus.textContent = "Unsaved changes.";
-  }));
+  [mood, goal, notes].forEach((field) => {
+    if (!field) return;
+    field.addEventListener("input", () => {
+      if (saveStatus) saveStatus.textContent = "Unsaved changes.";
+      scheduleAutoSave();
+    });
+    field.addEventListener("blur", saveToday);
+  });
 }
 
 function initArjunLetters() {
@@ -1149,7 +1167,10 @@ function createRealtimeState({
 
       ws = new WebSocket(wsUrl, ["realtime", `openai-insecure-api-key.${clientSecret}`]);
 
+      let wsErrorTimeout = null;
       ws.addEventListener("open", async () => {
+        if (wsErrorTimeout) clearTimeout(wsErrorTimeout);
+        wsErrorTimeout = null;
         setStatus("WebSocket open. Enabling mic…");
         results.textContent =
           "Realtime (beta) is on. Speak naturally — you’ll get short spoken feedback.";
@@ -1199,11 +1220,18 @@ function createRealtimeState({
       });
 
       ws.addEventListener("close", () => {
+        if (wsErrorTimeout) clearTimeout(wsErrorTimeout);
+        wsErrorTimeout = null;
         if (running) setStatus("Closed");
       });
 
       ws.addEventListener("error", () => {
-        if (running) setStatus("WebSocket error");
+        if (!running) return;
+        if (wsErrorTimeout) return;
+        wsErrorTimeout = setTimeout(() => {
+          wsErrorTimeout = null;
+          if (running && ws?.readyState !== WebSocket.OPEN) setStatus("WebSocket error");
+        }, 1500);
       });
     } catch (err) {
       setStatus(`Failed: ${err.message}`);
